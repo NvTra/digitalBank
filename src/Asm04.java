@@ -45,7 +45,11 @@ public class Asm04 {
                         String fileName = scanner.nextLine();
                         activeBank.addCustomer(fileName);
                     }
-                    case 3 -> addATMCustomer();
+                    case 3 -> {
+                        scanner.nextLine();
+                        String customerId = "";
+                        activeBank.addSavingAccount(scanner, customerId);
+                    }
                     case 4 -> System.out.println("options4");
                     case 5 -> System.out.println("options5");
                     case 6 -> System.out.println("options6");
@@ -62,10 +66,5 @@ public class Asm04 {
         } while (true);
     }
 
-    public static void addATMCustomer() {
-        scanner.nextLine();
-        String customerId = "";
-        activeBank.addSavingAccount(scanner, customerId);
-    }
 
 }

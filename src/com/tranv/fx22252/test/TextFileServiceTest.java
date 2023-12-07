@@ -12,6 +12,7 @@ public class TextFileServiceTest {
     @Test
     public void readFileTxt() {
         List<List<String>> data= TextFileService.readFileTxt("store/customer.txt");
+
         assertNotNull(data);
     }
 }

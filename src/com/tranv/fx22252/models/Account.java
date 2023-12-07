@@ -26,7 +26,7 @@ public class Account implements Serializable {
     }
 
     public boolean isPremiumAccount() {
-        return this.balance > 10000000;
+        return this.balance >= 10000000;
     }
 
     public Customer getCustomer() {
@@ -42,10 +42,11 @@ public class Account implements Serializable {
         return "Account{" +
                 "accountNumber='" + accountNumber + '\'' +
                 ", balance=" + balance +
+                ", accountType='" + accountType + '\'' +
+                ", customerId='" + customerId + '\'' +
+                ", transactionList=" + transactionList +
                 '}';
     }
-
-
 
     public String getAccountNumber() {
         return accountNumber;

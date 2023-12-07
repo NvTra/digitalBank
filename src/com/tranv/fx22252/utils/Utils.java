@@ -16,7 +16,7 @@ public class Utils {
     }
 
     public static String formatBalance(double balance) {
-        DecimalFormat df = new DecimalFormat("#,###.00");
+        DecimalFormat df = new DecimalFormat("#,###");
         return df.format(balance) + " đ";
     }
 
