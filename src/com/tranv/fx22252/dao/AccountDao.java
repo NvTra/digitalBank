@@ -17,15 +17,15 @@ public class AccountDao {
         return BinaryFileService.readFile(FILE_PATH);
     }
 
-    public void update(Account editAcount) {
-        List<Account> accounts = this.list();
+    public static void update(Account editAcount) {
+        List<Account> accounts = list();
         boolean hasExist = accounts.stream().anyMatch(account -> account.getAccountNumber().equals(editAcount.getAccountNumber()));
         List<Account> updateAccounts;
+        updateAccounts = new ArrayList<>();
         if (!hasExist) {
-            updateAccounts = new ArrayList<>();
             updateAccounts.add(editAcount);
         } else {
-            updateAccounts = new ArrayList<>();
+
             for (Account a : accounts) {
                 if (a.getAccountNumber().equals(editAcount.getAccountNumber())) {
                     updateAccounts.add(editAcount);
@@ -34,5 +34,6 @@ public class AccountDao {
                 }
             }
         }
+        save(updateAccounts);
     }
 }

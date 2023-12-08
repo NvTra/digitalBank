@@ -11,7 +11,7 @@ public class Account implements Serializable {
     private final String accountNumber;
     private double balance;
     private String accountType;
-    private String customerId;
+    private final String customerId;
     private final List<Transaction> transactionList = new ArrayList<>();
 
     public Account(String customerId, String accountNumber, double balance) {
@@ -21,9 +21,6 @@ public class Account implements Serializable {
 
     }
 
-    public Account(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
 
     public boolean isPremiumAccount() {
         return this.balance >= 10000000;
@@ -37,16 +34,6 @@ public class Account implements Serializable {
                 .orElse(null);
     }
 
-    @Override
-    public String toString() {
-        return "Account{" +
-                "accountNumber='" + accountNumber + '\'' +
-                ", balance=" + balance +
-                ", accountType='" + accountType + '\'' +
-                ", customerId='" + customerId + '\'' +
-                ", transactionList=" + transactionList +
-                '}';
-    }
 
     public String getAccountNumber() {
         return accountNumber;
@@ -56,9 +43,6 @@ public class Account implements Serializable {
         return balance;
     }
 
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
 
     public String getAccountType() {
         return accountType;
@@ -72,11 +56,15 @@ public class Account implements Serializable {
         return customerId;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
-    }
 
-    public void createTranSaction(double amount, boolean status, TransactionType type) {
+    public void createTransaction(double amount, boolean status, TransactionType type) {
+        if (type == TransactionType.DEPOSIT) {
+            balance += amount;
+        } else if (type == TransactionType.TRANSFER) {
+            balance -= amount;
+        } else if (type == TransactionType.WITHDRAW) {
+            balance -= amount;
+        }
         transactionList.add(new Transaction(accountNumber, amount, true, type));
     }
 

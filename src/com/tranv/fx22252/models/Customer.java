@@ -4,7 +4,6 @@ import com.tranv.fx22252.dao.AccountDao;
 import com.tranv.fx22252.utils.Utils;
 
 import java.io.Serializable;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -36,8 +35,8 @@ public class Customer extends User implements Serializable {
         return new ArrayList<>(filterList);
     }
 
-    public Account getAccountByAccountNumber(String accountNumber) {
-        return getAccounts().stream()
+    public Account getAccountByAccountNumber(List<Account> accounts, String accountNumber) {
+        return accounts.stream()
                 .filter(account -> account.getAccountNumber().equals(accountNumber))
                 .findFirst()
                 .orElse(null);
@@ -89,7 +88,6 @@ public class Customer extends User implements Serializable {
         return false;
     }
 
-
     public double getTotalBalance() {
         double totalBalance = 0;
         for (Account a : getAccounts()) {
@@ -113,6 +111,29 @@ public class Customer extends User implements Serializable {
             }
         }
         System.out.println();
+    }
+
+    public void withdraw(Scanner scanner) {
+        List<Account> accounts = getAccounts();
+        if (!accounts.isEmpty()) {
+            Account account;
+            double amount;
+
+            do {
+                System.out.print("Nhập số tài khoản: ");
+                account = getAccountByAccountNumber(accounts, scanner.nextLine());
+            } while (account == null);
+            do {
+                System.out.print("Nhập số tiền rút: ");
+                amount = Double.parseDouble(scanner.nextLine());
+            } while (amount <= 0);
+
+            ((SavingsAccount) account).withdraw(amount);
+            AccountDao.update(account);
+
+        } else {
+            System.out.println("Khách hàng không có tài khoản nào, thao tác không thành công");
+        }
     }
 
     public void displayTransactionInformation() {

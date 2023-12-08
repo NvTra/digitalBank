@@ -82,9 +82,24 @@ public class DigitalBank extends Bank {
             }
         } while (true);
 
-
     }
 
+    public boolean withdraw(Scanner scanner, String customerId) {
+
+        if (!Utils.validateCustomerId(customerId)) {
+            System.out.println("Mã số khách hàng không hợp lệ");
+            return false;
+        } else if (!isCustomerExisted(CustomerDao.list(), customerId)) {
+            System.out.println("Mã số khách hàng không tồn tại");
+            return false;
+        } else {
+            Customer customer = getCustomersById(CustomerDao.list(), customerId);
+            customer.displayInformation();
+            customer.withdraw(scanner);
+            return true;
+        }
+
+    }
 
 
 }

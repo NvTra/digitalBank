@@ -37,6 +37,13 @@ public class SavingsAccount extends Account implements IWithdraw, IReport, Seria
 
     @Override
     public boolean withdraw(double amount) {
+        if (isAccepted(amount)) {
+            createTransaction(amount,true,TransactionType.WITHDRAW);
+            System.out.println("G/D thành công");
+            log(amount);
+            return true;
+        }
+        System.out.println("G/D that bai");
         return false;
     }
 
