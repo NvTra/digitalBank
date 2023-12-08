@@ -2,6 +2,7 @@ package com.tranv.fx22252.models;
 
 
 import com.tranv.fx22252.dao.AccountDao;
+import com.tranv.fx22252.exception.CustomerIdNotValidException;
 import com.tranv.fx22252.utils.Utils;
 
 import java.io.Serializable;
@@ -18,12 +19,12 @@ public class Customer extends User implements Serializable {
         super();
     }
 
-    public Customer(String name, String customerId) {
+    public Customer(String name, String customerId) throws CustomerIdNotValidException {
         super(name, customerId);
     }
 
 
-    public Customer(List<String> customer) {
+    public Customer(List<String> customer) throws CustomerIdNotValidException {
         this(customer.get(1), customer.get(0));
     }
 
@@ -43,20 +44,17 @@ public class Customer extends User implements Serializable {
                 .orElse(null);
     }
 
-    public boolean isAccountExist(String accountNumber) {
-        return accountList.stream().anyMatch(account -> account.getAccountNumber().equals(accountNumber));
+    public boolean isAccountExist(List<Account> accounts, String accountNumber) {
+        return accounts.stream().anyMatch(account -> account.getAccountNumber().equals(accountNumber));
     }
 
     public void addAccount(Account account) {
         List<Account> accountList = AccountDao.list();
-        for (Account a : accountList) {
-            if (a.getAccountNumber().equals(account.getAccountNumber())) {
-                System.out.println("Tài khoản đã được sử dụng");
-                break;
-            }
+        if (isAccountExist(accountList, account.getAccountNumber())) {
+            System.out.println("Tài khoản đã được sử dụng thêm tài khoản không thành công.");
+        } else {
+            accountList.add(account);
         }
-
-        accountList.add(account);
         AccountDao.save(accountList);
     }
 
@@ -66,7 +64,7 @@ public class Customer extends User implements Serializable {
         do {
             System.out.print("Nhập số tài khoản gồm 6 chữ số: ");
             accountNumber = scanner.nextLine();
-        } while (!Utils.validateAccountNumber(accountNumber) || isAccountExist(accountNumber));
+        } while (!Utils.validateAccountNumber(accountNumber) || isAccountExist(AccountDao.list(), accountNumber));
         double balance = 0;
         do {
             try {
@@ -77,6 +75,7 @@ public class Customer extends User implements Serializable {
             }
         } while (balance < 50000);
         addAccount(new SavingsAccount(getCustomerId(), accountNumber, balance));
+        getAccountByAccountNumber(AccountDao.list(), accountNumber).createTransaction(0, true, TransactionType.DEPOSIT);
         System.out.println("thêm tài khoản thành công");
     }
 
@@ -97,23 +96,6 @@ public class Customer extends User implements Serializable {
         return totalBalance;
     }
 
-    public void displayInformation() {
-        System.out.printf("%-14s |%20s | %8s | %16s", this.getCustomerId()
-                , this.getName()
-                , this.isCustomerPremium() ? "PREMIUM" : "Normal"
-                , Utils.formatBalance(getTotalBalance()));
-
-        if (!getAccounts().isEmpty()) {
-            for (int i = 0; i < getAccounts().size(); i++) {
-                System.out.println();
-                System.out.printf("%-2s%12s |%50s", i + 1
-                        , getAccounts().get(i).getAccountNumber()
-                        , Utils.formatBalance(getAccounts().get(i).getBalance()));
-            }
-        }
-        System.out.println();
-    }
-
     public void withdraw(Scanner scanner) {
         List<Account> accounts = getAccounts();
         if (!accounts.isEmpty()) {
@@ -123,7 +105,7 @@ public class Customer extends User implements Serializable {
             do {
                 System.out.print("Nhập số tài khoản: ");
                 account = getAccountByAccountNumber(accounts, scanner.nextLine());
-            } while (account == null);
+            } while (account == null || !isAccountExist(AccountDao.list(), account.getAccountNumber()));
             do {
                 System.out.print("Nhập số tiền rút: ");
                 amount = Double.parseDouble(scanner.nextLine());
@@ -147,11 +129,13 @@ public class Customer extends User implements Serializable {
         do {
             System.out.print("Nhập số tài khoản: ");
             sendAccount = getAccountByAccountNumber(accounts, scanner.nextLine());
-        } while (sendAccount == null);
+        } while (sendAccount == null || !isAccountExist(AccountDao.list(), sendAccount.getAccountNumber()));
         do {
             System.out.print("Nhập số tài khoản nhận(exit để thoát): ");
             receiveAccount = getAccountByAccountNumber(accountList1, scanner.nextLine());
-        } while (receiveAccount == null);
+
+        } while (receiveAccount == null ||
+                !isAccountExist(AccountDao.list(), receiveAccount.getAccountNumber()));
         System.out.println("Gửi tiền đến tài khoản: " + receiveAccount.getAccountNumber() + " | " + receiveAccount.getCustomer().getName());
         do {
             System.out.print("Nhập số tiền chuyển: ");
@@ -172,8 +156,31 @@ public class Customer extends User implements Serializable {
         } while (!confirm.equalsIgnoreCase("n"));
     }
 
+    public void displayInformation() {
+        System.out.printf("%-14s |%20s | %8s | %19s", this.getCustomerId()
+                , this.getName()
+                , this.isCustomerPremium() ? "PREMIUM" : "Normal"
+                , Utils.formatBalance(getTotalBalance()));
+
+        if (!getAccounts().isEmpty()) {
+            for (int i = 0; i < getAccounts().size(); i++) {
+                System.out.println();
+                System.out.printf("%-2s %11s | %-30s |%20s"
+                        , i + 1
+                        , getAccounts().get(i).getAccountNumber()
+                        , getAccounts().get(i).getAccountType()
+                        , Utils.formatBalance(getAccounts().get(i).getBalance()));
+            }
+        }
+        System.out.println();
+    }
+
     public void displayTransactionInformation() {
         displayInformation();
-
+        for (Account a : getAccounts()) {
+            if (a.getTransactions() != null) {
+                a.displayTransactionsList();
+            }
+        }
     }
 }

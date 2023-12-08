@@ -1,5 +1,6 @@
 package com.tranv.fx22252.test;
 
+import com.tranv.fx22252.exception.CustomerIdNotValidException;
 import com.tranv.fx22252.models.Customer;
 import com.tranv.fx22252.service.BinaryFileService;
 import org.junit.Test;
@@ -19,7 +20,7 @@ public class BinaryFileServiceTest {
     }
 
     @Test
-    public void writeFile() {
+    public void writeFile() throws CustomerIdNotValidException {
         List<Customer> customers = new ArrayList<>();
         customers.add(new Customer("hoang", "040095012040"));
         customers.add(new Customer("tan", "040095012050"));

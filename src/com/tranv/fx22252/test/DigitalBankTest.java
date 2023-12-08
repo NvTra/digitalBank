@@ -1,5 +1,6 @@
 package com.tranv.fx22252.test;
 
+import com.tranv.fx22252.exception.CustomerIdNotValidException;
 import com.tranv.fx22252.models.DigitalBank;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +23,8 @@ public class DigitalBankTest {
     }
 
     @Test
-    public void addCustomer() {
+    public void addCustomer() throws CustomerIdNotValidException {
+        digitalBank.addCustomer("store/customer.txt");
     }
 
     @Test

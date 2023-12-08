@@ -66,7 +66,14 @@ public class Asm04 {
                             customerId = scanner.nextLine();
                         } while (!activeBank.withdraw(scanner, customerId));
                     }
-                    case 6 -> System.out.println("options6");
+                    case 6 -> {
+                        scanner.nextLine();
+                        String customerId;
+                        do {
+                            System.out.print("Nhập mã số khách hàng: ");
+                            customerId = scanner.nextLine();
+                        } while (!activeBank.displayTransactionInformation(scanner, customerId));
+                    }
                     case 0 -> {
                         System.out.println("Cảm ơn đã sử dụng chương trình");
                         System.exit(EXIT_COMMAND_CODE);
@@ -79,6 +86,4 @@ public class Asm04 {
             }
         } while (true);
     }
-
-
 }

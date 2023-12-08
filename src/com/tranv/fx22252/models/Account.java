@@ -1,10 +1,12 @@
 package com.tranv.fx22252.models;
 
 import com.tranv.fx22252.dao.CustomerDao;
+import com.tranv.fx22252.dao.TransactionDao;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class Account implements Serializable {
     private static final long serialVersionUID = 2L;
@@ -12,7 +14,7 @@ public class Account implements Serializable {
     private double balance;
     private String accountType;
     private final String customerId;
-    private final List<Transaction> transactionList = new ArrayList<>();
+    private final List<Transaction> transactionsList = TransactionDao.list();
 
     public Account(String customerId, String accountNumber, double balance) {
         this.customerId = customerId;
@@ -58,6 +60,7 @@ public class Account implements Serializable {
 
 
     public void createTransaction(double amount, boolean status, TransactionType type) {
+        List<Transaction> transactions = TransactionDao.list();
         if (type == TransactionType.DEPOSIT) {
             balance += amount;
         } else if (type == TransactionType.TRANSFER) {
@@ -65,10 +68,21 @@ public class Account implements Serializable {
         } else if (type == TransactionType.WITHDRAW) {
             balance -= amount;
         }
-        transactionList.add(new Transaction(accountNumber, amount, true, type));
+        transactions.add(new Transaction(accountNumber, (amount == 0 ? balance : amount), status, type));
+        TransactionDao.save(transactions);
     }
 
-    public List<Transaction> getTransactionList() {
-        return transactionList;
+    public List<Transaction> getTransactions() {
+        List<Transaction> transactions = TransactionDao.list();
+        List<Transaction> transactionsByAccount = transactions.stream()
+                .filter(transaction -> transaction.getAccountNumber().equals(this.accountNumber))
+                .toList();
+
+        return new ArrayList<>(transactionsByAccount);
+    }
+
+    public void displayTransactionsList() {
+        List<Transaction> transactions = getTransactions();
+        transactions.forEach(Transaction::displayTransactionHistory);
     }
 }

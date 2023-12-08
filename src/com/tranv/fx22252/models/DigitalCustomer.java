@@ -1,10 +1,12 @@
 package com.tranv.fx22252.models;
 
+import com.tranv.fx22252.exception.CustomerIdNotValidException;
+
 import java.text.DecimalFormat;
 import java.util.List;
 
 public class DigitalCustomer extends Customer {
-    public DigitalCustomer(String name, String customerId) {
+    public DigitalCustomer(String name, String customerId) throws CustomerIdNotValidException {
         super(name, customerId);
     }
 
@@ -22,17 +24,4 @@ public class DigitalCustomer extends Customer {
         System.out.println();
     }
 
-    @Override
-    public void displayTransactionInformation() {
-
-        System.out.printf("%12s | %18s | %19s | %36s \n", "Account", "Amount", "Time", "Transaction ID");
-        for (Account a : getAccounts()) {
-            if (a.getTransactionList() != null) {
-                for (Transaction t : a.getTransactionList()) {
-                    t.displayTransactionHistory();
-                    System.out.println();
-                }
-            }
-        }
-    }
 }

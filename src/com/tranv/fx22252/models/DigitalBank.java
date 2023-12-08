@@ -2,6 +2,7 @@ package com.tranv.fx22252.models;
 
 
 import com.tranv.fx22252.dao.CustomerDao;
+import com.tranv.fx22252.exception.CustomerIdNotValidException;
 import com.tranv.fx22252.service.TextFileService;
 import com.tranv.fx22252.utils.Utils;
 
@@ -22,7 +23,7 @@ public class DigitalBank extends Bank {
         }
     }
 
-    public void addCustomer(String fileName) {
+    public void addCustomer(String fileName) throws CustomerIdNotValidException {
         List<List<String>> inputData = TextFileService.readFileTxt(fileName);
         List<Customer> customers = customerList;
         int count = 0;
@@ -113,4 +114,16 @@ public class DigitalBank extends Bank {
         }
     }
 
+    public boolean displayTransactionInformation(Scanner scanner, String customerId) {
+        if (!Utils.validateCustomerId(customerId)) {
+            System.out.println("Mã số khách hàng không hợp lệ");
+            return false;
+        } else if (!isCustomerExisted(CustomerDao.list(), customerId)) {
+            System.out.println("Mã số khách hàng không tồn tại");
+            return false;
+        } else {
+            getCustomersById(CustomerDao.list(), customerId).displayTransactionInformation();
+            return true;
+        }
+    }
 }

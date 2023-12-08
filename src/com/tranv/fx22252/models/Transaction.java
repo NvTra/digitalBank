@@ -23,8 +23,15 @@ public class Transaction implements Serializable {
         this.time = Utils.getDateTime();
     }
 
+    public String getAccountNumber() {
+        return accountNumber;
+    }
 
     public void displayTransactionHistory() {
-        System.out.printf("%-4s  %6s | %9s | %18s | %19s | %36s ", this.status ? "[GD]" : "[FA]", accountNumber, type, Utils.formatBalance(amount), time, id);
+        System.out.printf("%-4s    %6s | %-9s | %18s | %19s \n", this.status ? "[GD]" : "[FA]"
+                , accountNumber
+                , type
+                , (type.equals(TransactionType.DEPOSIT) ? Utils.formatBalance(amount) : Utils.formatBalance(-amount))
+                , time);
     }
 }

@@ -1,5 +1,7 @@
 package com.tranv.fx22252.models;
 
+import com.tranv.fx22252.exception.CustomerIdNotValidException;
+
 import java.io.Serializable;
 
 public class User implements Serializable {
@@ -10,9 +12,9 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String name, String customerId) {
+    public User(String name, String customerId) throws CustomerIdNotValidException {
         this.name = name;
-        this.customerId = customerId;
+        setCustomerId(customerId);
     }
 
     public String getName() {
@@ -27,11 +29,11 @@ public class User implements Serializable {
         return customerId;
     }
 
-    public void setCustomerId(String customerId) throws Exception {
+    public void setCustomerId(String customerId) throws CustomerIdNotValidException {
         if (checkCCCD(customerId)) {
             this.customerId = customerId;
         } else {
-            throw new Exception("Số CCCD không hợp lệ");
+            throw new CustomerIdNotValidException("Số CCCD không hợp lệ");
         }
     }
 
