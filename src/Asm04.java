@@ -50,7 +50,14 @@ public class Asm04 {
                         String customerId = "";
                         activeBank.addSavingAccount(scanner, customerId);
                     }
-                    case 4 -> System.out.println("options4");
+                    case 4 -> {
+                        scanner.nextLine();
+                        String customerId;
+                        do {
+                            System.out.print("Nhập mã số khách hàng: ");
+                            customerId = scanner.nextLine();
+                        } while (!activeBank.tranfers(scanner, customerId));
+                    }
                     case 5 -> {
                         scanner.nextLine();
                         String customerId;

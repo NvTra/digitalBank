@@ -44,7 +44,6 @@ public class DigitalBank extends Bank {
             }
         }
         if (count > 0) {
-            CustomerDao customerDao = new CustomerDao();
             CustomerDao.save(customers);
         }
     }
@@ -85,7 +84,6 @@ public class DigitalBank extends Bank {
     }
 
     public boolean withdraw(Scanner scanner, String customerId) {
-
         if (!Utils.validateCustomerId(customerId)) {
             System.out.println("Mã số khách hàng không hợp lệ");
             return false;
@@ -98,8 +96,21 @@ public class DigitalBank extends Bank {
             customer.withdraw(scanner);
             return true;
         }
-
     }
 
+    public boolean tranfers(Scanner scanner, String customerId) {
+        if (!Utils.validateCustomerId(customerId)) {
+            System.out.println("Mã số khách hàng không hợp lệ");
+            return false;
+        } else if (!isCustomerExisted(CustomerDao.list(), customerId)) {
+            System.out.println("Mã số khách hàng không tồn tại");
+            return false;
+        } else {
+            Customer customer = getCustomersById(CustomerDao.list(), customerId);
+            customer.displayInformation();
+            customer.tranfers(scanner);
+            return true;
+        }
+    }
 
 }

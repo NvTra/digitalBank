@@ -20,7 +20,7 @@ public class CustomerTest {
     @Before
     public void setup() {
         digitalBank = new DigitalBank();
-//        digitalBank.addCustomer("store/customer.txt");
+        digitalBank.addCustomer("store/customer.txt");
 
         customer = digitalBank.getCustomersById(CustomerDao.list(), "040095012040");
         List<Account> accounts = customer.getAccounts();

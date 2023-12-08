@@ -1,5 +1,6 @@
 package com.tranv.fx22252.models;
 
+
 import com.tranv.fx22252.dao.AccountDao;
 import com.tranv.fx22252.utils.Utils;
 
@@ -136,10 +137,43 @@ public class Customer extends User implements Serializable {
         }
     }
 
+    public void tranfers(Scanner scanner) {
+        List<Account> accounts = getAccounts();
+        List<Account> accountList1 = AccountDao.list();
+        Account sendAccount;
+        Account receiveAccount;
+        double amount;
+        String confirm;
+        do {
+            System.out.print("Nhập số tài khoản: ");
+            sendAccount = getAccountByAccountNumber(accounts, scanner.nextLine());
+        } while (sendAccount == null);
+        do {
+            System.out.print("Nhập số tài khoản nhận(exit để thoát): ");
+            receiveAccount = getAccountByAccountNumber(accountList1, scanner.nextLine());
+        } while (receiveAccount == null);
+        System.out.println("Gửi tiền đến tài khoản: " + receiveAccount.getAccountNumber() + " | " + receiveAccount.getCustomer().getName());
+        do {
+            System.out.print("Nhập số tiền chuyển: ");
+            amount = Double.parseDouble(scanner.nextLine());
+        } while (amount <= 0);
+
+        do {
+            System.out.print("Xác nhận thực hiện chuyển: " + Utils.formatBalance(amount) +
+                    " từ tài khoản: [" + sendAccount.getAccountNumber() +
+                    "] đến tài khoản [" + receiveAccount.getAccountNumber() + "] (Y/N):");
+            confirm = scanner.nextLine();
+            if (confirm.equalsIgnoreCase("y")) {
+                ((SavingsAccount) sendAccount).tranfer(receiveAccount, amount);
+                AccountDao.update(receiveAccount);
+                AccountDao.update(sendAccount);
+                break;
+            }
+        } while (!confirm.equalsIgnoreCase("n"));
+    }
+
     public void displayTransactionInformation() {
         displayInformation();
 
     }
-
-
 }

@@ -2,12 +2,13 @@ package com.tranv.fx22252.models;
 
 import com.tranv.fx22252.common.IReport;
 
+import com.tranv.fx22252.common.ITranfer;
 import com.tranv.fx22252.common.IWithdraw;
 import com.tranv.fx22252.utils.Utils;
 
 import java.io.Serializable;
 
-public class SavingsAccount extends Account implements IWithdraw, IReport, Serializable {
+public class SavingsAccount extends Account implements IWithdraw, IReport, ITranfer, Serializable {
     private final long serialVersionUID = 2L;
     private final String SAVINGS_ACCOUNT_TYPE = "SAVINGS";
 
@@ -31,15 +32,25 @@ public class SavingsAccount extends Account implements IWithdraw, IReport, Seria
     }
 
     @Override
-    public void log(double amount, TransactionType type, String receiveAccount) {
-
+    public void log(double amount, TransactionType type, Account receiveAccount) {
+        System.out.println(Utils.getDivider());
+        System.out.printf("%30s%n", "BIÊN LAI GIAO DỊCH " + SAVINGS_ACCOUNT_TYPE);
+        System.out.printf("NGAY G/D: %28s%n", Utils.getDateTime());
+        System.out.printf("ATM ID: %30s%n", "DIGITAL-BANK-ATM 2023");
+        System.out.printf("SỐ TK: %31s%n", getAccountNumber());
+        System.out.printf("SỐ TK NHẬN: %26s%n", receiveAccount.getAccountNumber());
+        System.out.printf("SỐ TIỀN: %29s%n", Utils.formatBalance(amount));
+        System.out.printf("SỐ DƯ: %31s%n", Utils.formatBalance(getBalance()));
+        System.out.printf("PHÍ + VAT: %27s%n", "0 đ");
+        System.out.println(Utils.getDivider());
     }
+
 
     @Override
     public boolean withdraw(double amount) {
         if (isAccepted(amount)) {
-            createTransaction(amount,true,TransactionType.WITHDRAW);
-            System.out.println("G/D thành công");
+            createTransaction(amount, true, TransactionType.WITHDRAW);
+            System.out.println("Rút tiền thành công, biên lai giao dịch: ");
             log(amount);
             return true;
         }
@@ -71,4 +82,15 @@ public class SavingsAccount extends Account implements IWithdraw, IReport, Seria
     }
 
 
+    @Override
+    public void tranfer(Account receiveAccount, double amount) {
+        if (isAccepted(amount)) {
+            createTransaction(amount, true, TransactionType.TRANSFER);
+            receiveAccount.createTransaction(amount, true, TransactionType.DEPOSIT);
+            System.out.println("Chuyển tiền thành công, biên lai giao dịch: ");
+            log(amount,TransactionType.TRANSFER,receiveAccount);
+        } else {
+            System.out.println("giao dịch không thành công");
+        }
+    }
 }
